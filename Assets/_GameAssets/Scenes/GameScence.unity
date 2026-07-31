@@ -1488,7 +1488,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _orientationTransform: {fileID: 1135650937}
-  _movementSpeed: 20
+  _movementSpeed: 30
   _jumpKey: 32
   _jumpForce: 6
   _jumpCooldown: 0.5

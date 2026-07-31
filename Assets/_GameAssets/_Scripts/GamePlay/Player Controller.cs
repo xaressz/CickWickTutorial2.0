@@ -1,10 +1,10 @@
 using UnityEngine;
-
 public class PlayerController : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Transform _orientationTransform;
     [Header("Movement Settings")]
+    [SerializeField] KeyCode _movementKey;
    [SerializeField] private float _movementSpeed;
    [Header("Jump Settings")]
    [SerializeField] private KeyCode _jumpKey;
@@ -14,6 +14,13 @@ public class PlayerController : MonoBehaviour
    [Header("Ground Check Settings")]
    [SerializeField] private float _playerHeight;
    [SerializeField] private LayerMask _groundLayer;
+   [SerializeField] private float _groundDrag;
+   [Header("Slide Settings")]
+   [SerializeField] private KeyCode _slideKey;
+   [SerializeField] private float _slideMultiplier; 
+   [SerializeField] private bool _isSliding;      // false şu anda bir atama yapmadığımız için
+   [SerializeField] private float _slideDrag;
+
 
 
   private Rigidbody _playerRigidbody;
@@ -29,6 +36,8 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         SetInputs();
+        SetPlayerDrag();
+        LimitPlayerSpeed();
     }
     private void FixedUpdate()
     {
@@ -40,12 +49,23 @@ public class PlayerController : MonoBehaviour
         _horizontalInput = Input.GetAxisRaw("Horizontal");
         _verticalInput = Input.GetAxisRaw("Vertical");
 
-        if (Input.GetKeyDown(_jumpKey) && _canJump && IsGrounded())
+        if (Input.GetKeyDown(_slideKey))
+        {
+            _isSliding = true;
+             Debug.Log("player sliding");
+        }
+        else if (Input.GetKeyDown(_movementKey))
+        {
+            _isSliding = false;
+             Debug.Log("player moving normally");
+        }
+        else if (Input.GetKeyDown(_jumpKey) && _canJump && IsGrounded())
         {
           _canJump = false;
           Invoke(nameof(ResetJumping) , _jumpCooldown);   // belli bir süre sonra yap fonksiyonu süre geçmediyse yapma
           SetPlayerJumping();
         }
+
     }
     
     private void SetPlayerMovement()
@@ -53,7 +73,33 @@ public class PlayerController : MonoBehaviour
         _movementDirection = _orientationTransform.forward * _verticalInput
         +_orientationTransform.right * _horizontalInput;
 
-        _playerRigidbody.AddForce(_movementDirection.normalized * _movementSpeed , ForceMode.Force);
+        if (_isSliding)
+        {
+            _playerRigidbody.AddForce(_movementDirection.normalized * _movementSpeed * _slideMultiplier , ForceMode.Force);
+        }
+        else 
+        {
+          _playerRigidbody.AddForce(_movementDirection.normalized * _movementSpeed , ForceMode.Force);   
+        }
+    }
+    private void SetPlayerDrag()
+    {
+        if (_isSliding)
+      _playerRigidbody.linearDamping = _slideDrag;
+        else
+        {
+            _playerRigidbody.linearDamping = _groundDrag;
+        }        
+    }
+    private void LimitPlayerSpeed() 
+    {
+       Vector3 flatVelocity = new Vector3(_playerRigidbody.linearVelocity.x , 0f , _playerRigidbody.linearVelocity.z);
+
+       if (flatVelocity.magnitude > _movementSpeed)
+        {
+            Vector3 limitedVelocity = flatVelocity.normalized * _movementSpeed;
+            _playerRigidbody.linearVelocity = new Vector3(limitedVelocity.x , _playerRigidbody.linearVelocity.y , limitedVelocity.z);
+        }
     }
     private void SetPlayerJumping()
     {
