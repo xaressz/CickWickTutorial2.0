@@ -9,7 +9,8 @@ public class PlayerAnimationController : MonoBehaviour
    private StateController  _stateController;
     void Start()
     {
-        _playerController.OnPlayerJumped += PlayerController_OnPlayerJumped;
+        _playerController.OnPlayerJumped += PlayerController_OnPlayerJumped;         // sağ taraftaki bir fonksiyon sol taraftaki de event burada fonksiyon evente abone oluyor bu fonksiyon
+                                                                                    //triggerlandığında bu fonksiyonu çağır demek oluyor
     }
 
     

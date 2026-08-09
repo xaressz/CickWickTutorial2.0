@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
 
   private StateController _stateController;
   private Rigidbody _playerRigidbody;
+  private float _startingMovementSpeed, _startingJumpForce;
   private float _horizontalInput, _verticalInput;
   private Vector3 _movementDirection;
 
@@ -37,6 +38,8 @@ public class PlayerController : MonoBehaviour
         _stateController = GetComponent<StateController>();
         _playerRigidbody = GetComponent<Rigidbody>();
         _playerRigidbody.freezeRotation = true;
+        _startingMovementSpeed = _movementSpeed;
+        _startingJumpForce = _jumpForce;
     }
     private void Update()
     {
@@ -92,7 +95,6 @@ public class PlayerController : MonoBehaviour
         {
             _stateController.ChangeState(newState);
         }
-        Debug.Log(newState);
     }
 
 
@@ -133,9 +135,9 @@ public class PlayerController : MonoBehaviour
     }
     private void SetPlayerJumping()
     {
-        if(OnPlayerJumped != null)
+        if(OnPlayerJumped != null)                 
         {
-            OnPlayerJumped.Invoke();        // eventi tetikledik burada
+            OnPlayerJumped.Invoke();       // eventi tetikledik burada  telsize bastık gibi düşünebiliriz diğer abone olunan tarafı tetikledik 
         }
         _playerRigidbody.linearVelocity = new Vector3 (_playerRigidbody.linearVelocity.x , 0f, _playerRigidbody.linearVelocity.z);
         _playerRigidbody.AddForce(transform.up*_jumpForce,ForceMode.Impulse);
@@ -144,6 +146,7 @@ public class PlayerController : MonoBehaviour
     {
         _canJump=true;
     }
+    #region Helpers Function
     private bool IsGrounded()  // bu fonksiyon zemine bir ışın (_playerHeight * 0.5f + 0.2f bu büyüklükte) (deneyerek bulunmul büyüklük)  fırlatıyor ve yerde olup olmadığını kontrol ediyor bu ışın
     // yere değdiği zaman karakter zıplayabilir konumda oluyor eğer ki bu ışın yere değmiyorsa karakter havadadır zıplayamaz
     {
@@ -157,4 +160,23 @@ public class PlayerController : MonoBehaviour
     {
         return _isSliding;
     }
+    public void SetMovementSpeed (float speed, float duration)
+    {
+        _movementSpeed += speed;
+        Invoke(nameof(ResetMovemetSpeed),duration);
+    }
+    private void ResetMovemetSpeed()
+    {
+        _movementSpeed = _startingMovementSpeed;
+    }
+    public void SetJumpForce(float force, float duration)
+    {
+        _jumpForce += force;
+        Invoke(nameof(ResetJumpForce),duration);
+    }
+    private void ResetJumpForce()
+    {
+        _jumpForce = _startingJumpForce;
+    }
+    #endregion
 }
