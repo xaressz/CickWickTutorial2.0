@@ -9,6 +9,10 @@ public class Consts
    public const string IS_SLIDING ="IsSliding";
    public const string IS_SLIDING_ACTIVE ="IsSlidingActive";                //BUNLARI UNİTY ANİMASYONLARINDAN ALACAĞIZ KODLARDA ANİMASYONLARIN BAŞLAMASI İÇİN BU İSİMLERİ KULLANACAĞIZ0
     }
+    public struct OtherAnimation
+    {
+        public const string IS_SPATULA_JUMPING ="IsSpatluaJumping";
+    }
     
     public struct WheatTypes
     {

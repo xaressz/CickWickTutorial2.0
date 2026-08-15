@@ -1,23 +1,27 @@
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class PlayerInteractionController : MonoBehaviour
 {
-    [SerializeField] private GoldWheatCollectable _goldWheatCollectable;
-    [SerializeField] private HolyWheatCollectable _holyWheatCollectable;
-    [SerializeField] private RottenWheatCollectable _rottenWheatCollectable;
-     private void OnTriggerEnter(Collider other)    //çarptığımız objenin ismini zaten other diye vermiş oyun bize
+    private PlayerController _playerController;
+    private void Awake()
     {
-        if(other.CompareTag(Consts.WheatTypes.GOLD_WHEAT))          // eğer ki bu if bloğu true dönerse yani triggerlandıysa bu tagli object o zaman bloğun içindekileri yap 
+        _playerController = GetComponent<PlayerController>();
+    }
+    private void OnTriggerEnter(Collider other)    //çarptığımız objenin ismini zaten other diye vermiş oyun bize 
+    {
+        if(other.gameObject.TryGetComponent<ICollectable>(out var collectable)) //interfacelere teker teker bakıyor en üstte ICollectible var mı diye bakıyor 
         {
-            _goldWheatCollectable.Collect();
+            collectable.Collect();   // atıyorum mesela bir istrigger i ture olan bir objeye çarptık ama içinde ICollectible yok o yzaman bu bloğun içerisine girmicek       trygetcomponent'in normal getcomponentten farkı eğer ICollectible ı bulabilirse if döngüsüne girecek bulamazsa direkt buraya girmiyor 
+           // bu sebeple null check yapmamıza da gerek kalmıyor
+           // bir sürü if döngüsü yazmamıza gerek kalmadı temiz bir kod oldu 40234 tane wheat olsaydı hepsine if döngüsü açmak kirli bir kod olurdu
         }
-        if(other.CompareTag(Consts.WheatTypes.HOLY_WHEAT))
+    }
+    private void OnCollisionEnter(Collision other)
+    {
+        if(other.gameObject.TryGetComponent<IBoostable>(out var boostlable))
         {
-            _holyWheatCollectable.Collect();
-        }
-        if(other.CompareTag(Consts.WheatTypes.ROTTEN_WHEAT))
-        {
-            _rottenWheatCollectable.Collect();
+            boostlable.Boost(_playerController);
         }
     }
 }
