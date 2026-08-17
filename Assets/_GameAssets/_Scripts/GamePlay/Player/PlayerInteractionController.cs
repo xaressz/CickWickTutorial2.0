@@ -8,7 +8,7 @@ public class PlayerInteractionController : MonoBehaviour
     {
         _playerController = GetComponent<PlayerController>();
     }
-    private void OnTriggerEnter(Collider other)    //çarptığımız objenin ismini zaten other diye vermiş oyun bize 
+    private void OnTriggerEnter(Collider other) //çarptığımız objenin ismini zaten other diye vermiş oyun bize 
     {
         if(other.gameObject.TryGetComponent<ICollectable>(out var collectable)) //interfacelere teker teker bakıyor en üstte ICollectible var mı diye bakıyor 
         {

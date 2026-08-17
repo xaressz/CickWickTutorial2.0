@@ -2,7 +2,8 @@ using System;
 using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
-    public event Action OnPlayerJumped;    //bu eventi oyunda bir yerde triggerlıyorum bu oyunda jump oluyor bu farklı bir yerlerden bunu çağırıp (bu yüzden public yaptık) bu event triggerlandığında şunu yap dicez
+    public event Action OnPlayerJumped;
+    public event Action<PlayerState> OnplayerStateChange;    //bu eventi oyunda bir yerde triggerlıyorum bu oyunda jump oluyor bu farklı bir yerlerden bunu çağırıp (bu yüzden public yaptık) bu event triggerlandığında şunu yap dicez
                                            // eventler genelde On ile başlar 
     [Header("References")]
     [SerializeField] private Transform _orientationTransform;
@@ -94,6 +95,7 @@ public class PlayerController : MonoBehaviour
        if (newState != currentState)
         {
             _stateController.ChangeState(newState);
+            OnplayerStateChange?.Invoke(newState);
         }
     }
 
